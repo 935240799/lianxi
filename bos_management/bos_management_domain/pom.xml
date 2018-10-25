@@ -5,7 +5,6 @@
     <artifactId>bos_management</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.itheima</groupId>
   <artifactId>bos_management_domain</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <description>管理后台的实体类</description>
 </project>

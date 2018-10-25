@@ -5,7 +5,13 @@
     <artifactId>bos_management</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.itheima</groupId>
   <artifactId>bos_management_dao</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <description>管理后台的DAO</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.itheima</groupId>
+  		<artifactId>bos_management_domain</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>
