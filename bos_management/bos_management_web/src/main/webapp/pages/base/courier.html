@@ -24,12 +24,57 @@
 				alert("修改...");
 			}
 			
-			function doDelete(){
-				alert("删除...");
+			function doDelete() {
+
+				var rows = $("#grid").datagrid("getSelections")
+				if (rows.length == 0) {
+					$.messager.alert("提示", "你至少要选择一条数据进行操作", "info")
+				} else {
+					$.messager
+							.confirm(
+									'删除对话框',
+									'您确定要作废这些快递员吗？',
+									function(r) {
+										if (r) {
+
+											var arr = new Array();
+											for (var i = 0; i < rows.length; i++) {
+												arr.push(rows[i].id)
+											}
+
+											window.location.href = "../../courierAction_batchDel.action?ids="
+													+ arr.toString()
+										}
+									});
+				}
+
 			}
 			
 			function doRestore(){
-				alert("将取派员还原...");
+				var rows = $("#grid").datagrid("getSelections")
+				if (rows.length == 0) {
+					$.messager.alert("提示", "你至少要选择一条数据进行操作", "info")
+				} else {
+					$.messager
+							.confirm(
+									'还原对话框',
+									'您确定要还原这些快递员吗？',
+									function(r) {
+										if (r) {
+
+											var arr = new Array();
+											for (var i = 0; i < rows.length; i++) {
+												arr.push(rows[i].id)
+											}
+											window.location.href = "../../courierAction_batchRestore.action?ids="
+													+ arr.toString()
+										}
+									});
+				}
+			}
+			
+			function openSearchWindow() {
+				$("#searchWindow").window("open")
 			}
 			//工具栏
 			var toolbar = [ {
@@ -52,6 +97,11 @@
 				text : '还原',
 				iconCls : 'icon-save',
 				handler : doRestore
+			},{
+				id : 'button-search',
+				text : '搜索',
+				iconCls : 'icon-search',
+				handler : openSearchWindow
 			}];
 			// 定义列
 			var columns = [ [ {
@@ -109,7 +159,7 @@
 				width : 80,
 				align : 'center',
 				formatter : function(data,row, index){
-					if(data=="0"){
+					if(data!="1"){
 						return "正常使用"
 					}else{
 						return "已作废";
@@ -141,7 +191,7 @@
 					pageList: [30,50,100],
 					pagination : true,
 					toolbar : toolbar,
-					url : "../../data/courier.json",
+					url : "../../courierAction_pageQuery.action",
 					idField : 'id',
 					columns : columns,
 					onDblClickRow : doDblClickRow
@@ -164,6 +214,40 @@
 				alert("双击表格数据...");
 			}
 		</script>
+		<script type="text/javascript">
+			//提交快递员的数据
+			function submitData() {
+				if ($("#courierForm").form("validate")) {
+					$("#courierForm").submit()
+				}
+			}
+			
+			$.fn.serializeJson = function() {
+				var serializeObj = {};
+				var array = this.serializeArray();
+				var str = this.serialize();
+				$(array).each(
+						function() {
+							if (serializeObj[this.name]) {
+								if ($.isArray(serializeObj[this.name])) {
+									serializeObj[this.name].push(this.value);
+								} else {
+									serializeObj[this.name] = [
+											serializeObj[this.name], this.value ];
+								}
+							} else {
+								serializeObj[this.name] = this.value;
+							}
+						});
+				return serializeObj;
+			};
+			
+			function doSearch() {
+				var result = $("#searchForm").serializeJson()
+				$('#grid').datagrid('load',result);
+			}
+			
+		</script>
 	</head>
 
 	<body class="easyui-layout" style="visibility:hidden;">
@@ -173,12 +257,12 @@
 		<div class="easyui-window" title="对收派员进行添加或者修改" id="addWindow" collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
 			<div region="north" style="height:31px;overflow:hidden;" split="false" border="false">
 				<div class="datagrid-toolbar">
-					<a id="save" icon="icon-save" href="#" class="easyui-linkbutton" plain="true">保存</a>
+					<a onclick="submitData()" id="save" icon="icon-save" href="#" class="easyui-linkbutton" plain="true">保存</a>
 				</div>
 			</div>
 
 			<div region="center" style="overflow:auto;padding:5px;" border="false">
-				<form>
+				<form id="courierForm" method="post" action="../../courierAction_save.action">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="4">收派员信息</td>
@@ -244,7 +328,7 @@
 		<!-- 查询快递员-->
 		<div class="easyui-window" title="查询快递员窗口" closed="true" id="searchWindow" collapsible="false" minimizable="false" maximizable="false" style="width: 400px; top:40px;left:200px">
 			<div style="overflow:auto;padding:5px;" border="false">
-				<form id="searchForm">
+				<form id="searchForm" method="post" action="../../courierAction_pageQuery.action">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="2">查询条件</td>
@@ -274,7 +358,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="2"><a id="searchBtn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> </td>
+							<td colspan="2"><a id="searchBtn" href="#" onclick="doSearch()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> </td>
 						</tr>
 					</table>
 				</form>
