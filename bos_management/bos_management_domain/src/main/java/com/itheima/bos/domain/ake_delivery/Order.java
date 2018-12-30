@@ -289,6 +289,7 @@ public class Order {
         return "Order [id=" + id + ", orderNum=" + orderNum + ", telephone="
                 + telephone + ", customer_id=" + customer_id + ", sendName="
                 + sendName + ", sendMobile=" + sendMobile + ", sendCompany="
+                
                 + sendCompany + ", sendArea=" + sendArea + ", sendAddress="
                 + sendAddress + ", recName=" + recName + ", recMobile="
                 + recMobile + ", recCompany=" + recCompany + ", recArea="

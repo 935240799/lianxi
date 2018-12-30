@@ -1,5 +1,6 @@
 package com.itheima.bos.fore.web.action;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.jms.JMSException;
@@ -46,34 +47,34 @@ public class CustomerAction extends ActionSupport implements ModelDriven<Custome
         return model;
     }
 
+    
+    @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Action("customerAction_sendSMS")
-    public String sendSMS() {
+    @Action(value = "customerAction_sendSMS")
+    public String sendSMS() throws IOException {
 
-        // 随机生成验证码
+        // 随机验证码
         final String code = RandomStringUtils.randomNumeric(6);
-
-        System.out.println(code);
-
+        System.out.println("code: " + code);
+        // 存入Session
         ServletActionContext.getRequest().getSession().setAttribute("serverCode", code);
 
-        // 发送验证码
+        // 手机号,内容
         jmsTemplate.send("sms", new MessageCreator() {
 
             @Override
             public Message createMessage(Session session) throws JMSException {
                 MapMessage message = session.createMapMessage();
-
-                message.setString("tel", model.getTelephone());
+                message.setString("tel", getModel().getTelephone());
                 message.setString("code", code);
-
                 return message;
             }
         });
 
         return NONE;
     }
+
 
     // 使用属性驱动获取输入的验证码
     private String checkcode;
